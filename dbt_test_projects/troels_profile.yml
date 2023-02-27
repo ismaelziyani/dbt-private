@@ -1,0 +1,95 @@
+# For more information on how to configure this file, please see:
+# https://docs.getdbt.com/docs/profile
+
+config:
+  send_anonymous_usage_stats: False
+
+# Create a service account key from this page: 
+# https://console.cloud.google.com/apis/credentials/wizard?project=data-lakehouse-prod
+# 1 Check project at top is correct!
+# 2 Select BigQuery API + Application Data + No, I'm not using them
+# 3 Press Next (not Done!)
+# 4 Service account name: dbt-staging/prod-username (choose staging or prod, and use your short username)
+# 5 Describe: dbt service account for "username"
+# 6 Create and continue
+# 7 Add Roles: 
+#   Prod: 
+#         BigQuery Data Editor
+#         BigQuery User
+#   Staging: 
+#         BigQuery Data Editor
+#         BigQuery User
+#   Developer: 
+#         BigQuery Data Editor
+#         BigQuery Data Owner
+#         BigQuery User
+# 8 
+
+
+# WT data_lakehouse 
+wt_data_lakehouse_profile:     # this is the developer WT GCP Project profile
+  target: na_invalid
+  outputs:
+    na_invalid:                         # this is required for default but should not be used!
+      type: bigquery
+      project: no_project
+      dataset: na_dataset
+      method: service-account
+      keyfile: /Users/X/na_invalid.json # point to a non-existing key causing it to fail on purpose
+
+    # riist
+    wt_staging:
+      type: bigquery
+      project: data-lakehouse-staging   # GCP project
+      dataset: dbt                      # "dataset + _schema" from models in dbt_project.yml will be the combined dataset name
+      method: service-account
+      keyfile: /Users/riist/.dbt/wt-data-lakehouse-b039081235e9-riist-staging.json
+      threads: 1
+      timeout_seconds: 300
+      location: EU
+      priority: interactive  
+
+    wt_prod:
+      type: bigquery
+      project: data-lakehouse-prod      # GCP project
+      dataset: dbt                      # "dataset + _schema" from models in dbt_project.yml will be the combined dataset name
+      method: service-account
+      keyfile: /Users/riist/.dbt/wt-data-lakehouse-c12515a4e61b-riist-prod.json
+      threads: 1
+      timeout_seconds: 300
+      location: EU
+      priority: interactive  
+
+# "client" data_lakehouse
+CLIENT_data_lakehouse_profile:          # REPLACE "client” with actual like: nestle_us_geo
+  target: na_invalid
+  outputs:
+    na_invalid:                         # this is required for default but should not be used!
+      type: bigquery
+      project: no_project
+      dataset: na_dataset
+      method: service-account
+      keyfile: /Users/X/na_invalid.json # this is a non-existing key causing it to fail on purpose
+
+    # riist
+    CLIENT_staging:                     # REPLACE "client” with actual like: nestle_us_geo
+      type: bigquery
+      project: XX_staging               # GCP project
+      dataset: dbt                      # "dataset + _schema" from models in dbt_project.yml will be the combined dataset name
+      method: service-account
+      keyfile: /Users/riist/.dbt/XX-riist-staging.json
+      threads: 1
+      timeout_seconds: 300
+      location: EU
+      priority: interactive  
+
+    CLIENT_prod:                        # REPLACE "client” with actual like: nestle_us_geo
+      type: bigquery
+      project: XX_prod                  # GCP project
+      dataset: dbt                      # "dataset + _schema" from models in dbt_project.yml will be the combined dataset name
+      method: service-account
+      keyfile: /Users/riist/.dbt/XX-riist-prod.json
+      threads: 1
+      timeout_seconds: 300
+      location: EU
+      priority: interactive  

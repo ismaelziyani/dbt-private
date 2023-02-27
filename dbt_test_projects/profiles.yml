@@ -1,0 +1,14 @@
+dbt_test_projects:
+  outputs:
+    dev:
+      dataset: dbt_ismael
+      job_execution_timeout_seconds: 300
+      job_retries: 1
+      keyfile: /Users/ziyanii/dev/data-lakehouse/datalake-tester/dbt-sa-data-lakehouse-raw.json
+      location: EU
+      method: service-account
+      priority: interactive
+      project: data-lakehouse-raw
+      threads: 4
+      type: bigquery
+  target: dev
